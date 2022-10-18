@@ -1,0 +1,34 @@
+<p style="color: green"><%= notice %></p>
+
+<h1>Games</h1>
+
+<div id="games">
+  <table class="game-list">
+    <tbody>
+      <tr>
+        <th>Player name</th>
+        <th>Last time played</th>
+        <th>Progress</th>
+      <tr>
+
+      <% @games.each do |game| %>
+      <tr>
+        <td>
+          <%= link_to game.player_name, game %>
+        </td>
+        <td>
+          <%= game.formatted_updated_at %>
+        </td>
+        <td>
+        <%= game.game_result %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+<br />
+<br />
+
+<%= link_to "New game", new_game_path %>

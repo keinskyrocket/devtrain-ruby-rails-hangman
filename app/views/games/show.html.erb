@@ -1,0 +1,51 @@
+<% key_input = [
+    "QWERTYUIOP",
+    "ASDFGHJKL",
+    "ZXCVBNM"
+  ]
+%>
+
+<p style="color: green"><%= notice %></p>
+
+<div>Player name: <%= @game.player_name %></div>
+<div>Remaining lives: <%= @game.remaining_lives %></div>
+<br>
+
+<% @game.secret_word.chars.map do | letter | %>
+  <% if @game.letters_guessed.include?(letter) %>
+    <span><%= letter %></span>
+  <% elsif %>
+    <span>@</span>
+  <% end %>
+<% end %>
+
+<br>
+<br>
+
+<% key_input.each do | row | %>
+  <div class="input_row">
+    <% row.split('') do | letter | %>
+      <%= button_to letter, game_guesses_path(@game), params: { guess: { value: letter.upcase } }, disabled: @game.check_dupe?(letter) %>
+      <%# <%= button_to letter, game_guesses_path(@game), params: {'guess[value]' => letter.upcase } %>
+    <% end %>
+  </div>
+  <br />
+<% end %>
+
+<br>
+<br>
+<%= @game.game_result %>
+
+<br>
+<br>
+<% if @game.game_result == 'Lose' %>
+  <span>Your secret word is: <em><%= @game.secret_word %></em></span>
+<% end %>
+
+<br>
+<br>
+
+<div>
+  <%= link_to "Back to games", games_path %>
+  <%= button_to "Destroy this game", @game, method: :delete %>
+</div>

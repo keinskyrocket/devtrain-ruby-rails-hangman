@@ -1,0 +1,27 @@
+<h1>New game</h1>
+
+<%= form_for(@game) do |post_form| %>
+  <% if @game.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(@game.errors.count, "error") %> prohibited this game from being saved:</h2>
+
+      <ul>
+        <% @game.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= post_form.label :player_name %>
+  <%= post_form.text_field :player_name %>
+  <br />
+  <%= post_form.submit %>
+<% end %>
+
+<br />
+<br />
+
+<div>
+  <%= link_to "Back to games", games_path %>
+</div>

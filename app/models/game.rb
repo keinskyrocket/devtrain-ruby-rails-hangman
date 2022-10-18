@@ -25,7 +25,7 @@ class Game < ApplicationRecord
   end
 
   def formatted_updated_at
-    updated_at.strftime("%Y/%m/%d - %H:%M %p")
+    updated_at.strftime("%Y/%m/%d - %H:%M")
   end
 
   def check_dupe?(letter)

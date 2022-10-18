@@ -3,6 +3,7 @@ class GuessesController < ApplicationController
     game = Game.find(params[:game_id])
     
     if game.game_result != 'In progress'
+      redirect_to game, notice: "Game is already over."
       return
     end
 
@@ -15,7 +16,6 @@ class GuessesController < ApplicationController
 
     guess.save!
 
-    # TODO: (do not save game_result every guess)
     if game.secret_word.chars.uniq.count == game.correct_guess
       game.game_result = 'Win'
     end
@@ -26,13 +26,17 @@ class GuessesController < ApplicationController
 
     respond_to do |format|
       if game.save
-        format.html { redirect_to game, notice: "Guess was successfully created." }
-        # format.json { render :show, status: :created, location: game }
-
-        if game.game_result != 'In progress'
-          redirect_to game, notice: "Game is already over."
-          return
+        format.html do
+          if game.game_result == 'Win'
+            redirect_to game, notice: "You won!"
+          elsif game.game_result == 'Lose'
+            redirect_to game, notice: "Game over..."
+          else            
+            redirect_to game, notice: "Guess was successfully created."
+          end
         end
+
+        # format.json { render :show, status: :created, location: game }
       else
         format.html { redirect_to game, alert: "Unable to create guesses." }
         # format.json { render json: guess.errors, status: :unprocessable_entity }

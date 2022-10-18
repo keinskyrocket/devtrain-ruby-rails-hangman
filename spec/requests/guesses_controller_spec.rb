@@ -50,7 +50,7 @@ describe GuessesController do
         expect(response).to redirect_to game
 
         expect(game.reload.game_result).to eq 'Lose'
-        expect(flash[:notice]).to eq 'Game is already over.'
+        expect(flash[:notice]).to eq 'Game over...'
       end
 
       it 'should set game_result to be Lose' do
@@ -107,6 +107,7 @@ describe GuessesController do
         
         expect(game.reload.game_result).to eq 'Win'
         expect(game.remaining_lives).not_to be 0
+        expect(flash[:notice]).to eq 'You won!'
       end
     end
   end

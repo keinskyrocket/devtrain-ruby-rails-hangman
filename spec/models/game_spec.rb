@@ -8,14 +8,17 @@ describe Game do
     secret_word: 'TURTLE'
   ) }
 
+  let (:guesses) { [] }
+
+  before do
+    guesses.each do | guess |
+      Guess.create(value: guess, game: game)
+    end
+  end
+
   describe '#remaining_lives' do
     context 'when wrong guesses are made three time' do
-      before do
-        Guess.create(value: 'T', game: game) # Correct guess
-        Guess.create(value: 'A', game: game)
-        Guess.create(value: 'S', game: game)
-        Guess.create(value: 'D', game: game)
-      end
+      let (:guesses) { ['T', 'A', 'S', 'D'] }
 
       it 'should return integer 6 for remaining_lives' do
         expect(game.reload.remaining_lives).to eq 6
@@ -23,12 +26,7 @@ describe Game do
     end
 
     context 'when no wrong guesses are made' do
-      before do
-        Guess.create(value: 'T', game: game) # Correct guess
-        Guess.create(value: 'U', game: game) # Correct guess
-        Guess.create(value: 'R', game: game) # Correct guess
-        Guess.create(value: 'L', game: game) # Correct guess
-      end
+      let (:guesses) { ['T', 'U', 'R', 'L'] }
 
       it 'should return integer 9 for remaining_lives' do
         expect(game.reload.remaining_lives).to eq 9
@@ -38,37 +36,25 @@ describe Game do
 
   describe "#letters_guessed" do
     context 'when guesses are made' do
-      before do
-        Guess.create(value: 'A', game: game)
-        Guess.create(value: 'S', game: game)
-        Guess.create(value: 'D', game: game)
-      end
+      let (:guesses) { ['A', 'S', 'D'] }
 
-      it 'should return array of guessed letters' do
-        expect(game.reload.letters_guessed).to eq ['A', 'S', 'D']
+      it 'returns array of guessed letters' do
+        expect(game.reload.letters_guessed).to eq guesses
       end
     end
   end
 
   describe '#correct_guess' do
     context 'when 2 correct guesses are made' do
-      before do
-        Guess.create(value: 'T', game: game) # Correct letter
-        Guess.create(value: 'U', game: game) # Correct letter
-        Guess.create(value: 'S', game: game)
-      end
+      let (:guesses) { ['T', 'U', 'S'] }
 
-      it 'should return integer 2' do
+      it 'returns integer 2' do
         expect(game.correct_guess).to eq 2
       end
     end
 
     context 'when no correct guess is made' do
-      before do
-        Guess.create(value: 'A', game: game)
-        Guess.create(value: 'S', game: game)
-        Guess.create(value: 'D', game: game)
-      end
+      let (:guesses) { ['A', 'S', 'D'] }
 
       it 'should return integer 0' do
         expect(game.correct_guess).to eq 0
@@ -85,11 +71,7 @@ describe Game do
 
   describe "#check_dupe?(letter)" do
     context 'when the same guess is made' do
-      before do
-        Guess.create(value: 'A', game: game)
-        Guess.create(value: 'S', game: game)
-        Guess.create(value: 'D', game: game)
-      end
+      let (:guesses) { ['A', 'S', 'D'] }
 
       it 'should return true' do
         expect(game.reload.check_dupe?('A')).to be true
@@ -97,12 +79,8 @@ describe Game do
     end
 
     context 'when no same guess is made' do
-      before do
-        Guess.create(value: 'A', game: game)
-        Guess.create(value: 'S', game: game)
-        Guess.create(value: 'D', game: game)
-      end
-
+      let (:guesses) { ['A', 'S', 'D'] }
+      
       it 'should return false' do
         expect(game.reload.check_dupe?('Z')).to be false
       end

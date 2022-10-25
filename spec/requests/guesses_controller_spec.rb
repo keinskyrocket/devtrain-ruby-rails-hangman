@@ -8,12 +8,17 @@ describe GuessesController do
     secret_word: 'TURTLE'
   ) }
 
+  let (:guesses) { [] }
+
+  before do
+    guesses.each do | guess |
+      Guess.create(value: guess, game: game)
+    end
+  end
+
   describe '#create' do
     context 'when the same guess was made' do
-      before do
-        Guess.create(value: 'T', game: game) # Correct letter
-        Guess.create(value: 'A', game: game)
-      end
+      let (:guesses) { ['T', 'A'] }
 
       it 'should display a message that the guess is dupe' do
         expect(game.reload.game_result).to eq 'In progress'
@@ -25,17 +30,7 @@ describe GuessesController do
     end
 
     context 'when the guess loses the game' do
-      before do
-        Guess.create(value: 'T', game: game) # Correct letter
-        Guess.create(value: 'A', game: game)
-        Guess.create(value: 'S', game: game)
-        Guess.create(value: 'D', game: game)
-        Guess.create(value: 'F', game: game)
-        Guess.create(value: 'G', game: game)
-        Guess.create(value: 'H', game: game)
-        Guess.create(value: 'J', game: game)
-        Guess.create(value: 'K', game: game)
-      end
+      let (:guesses) { ['T', 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K'] }
 
       it 'should display a message that game is over' do
         expect(game.reload.game_result).to eq 'In progress'
@@ -53,19 +48,11 @@ describe GuessesController do
     
         expect(game.reload.game_result).to eq 'Lose'
         expect(game.remaining_lives).to be 0
-      end 
+      end
     end
 
     context 'when game is win' do
-      before do
-        Guess.create(value: 'T', game: game) # Correct letter
-        Guess.create(value: 'U', game: game) # Correct letter
-        Guess.create(value: 'R', game: game) # Correct letter
-        Guess.create(value: 'L', game: game) # Correct letter
-        Guess.create(value: 'F', game: game)
-        Guess.create(value: 'G', game: game)
-        Guess.create(value: 'H', game: game)
-      end
+      let (:guesses) { ['T', 'U', 'R', 'L', 'F', 'G', 'H'] }
 
       it 'should set game_result to be Win' do
         expect(game.reload.game_result).to eq 'In progress'

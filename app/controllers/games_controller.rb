@@ -18,11 +18,8 @@ class GamesController < ApplicationController
 
   # POST /games or /games.json
   def create
-    @game = Game.new(game_params)
-    # @game.secret_word = ["king", "queen", "turtle"].sample.upcase
-    # @game.secret_word = @game.load_secret_words.sample.upcase
-    @game.secret_word = Game.load_secret_words.sample.upcase
-    @game.game_result = "In progress"
+    game_builder = GameBuilder.new(game_params)
+    @game = game_builder.call
 
     respond_to do |format|
       if @game.save

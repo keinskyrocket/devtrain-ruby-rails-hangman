@@ -17,10 +17,24 @@ describe GamesController do
       expect(flash[:notice]).to eq 'Game was successfully created.'
 
       game = Game.last
-      expect(game.reload.game_result).to eq 'In progress'
       expect(game.remaining_lives).to be 9
-      expect(game.secret_word).to eq 'TEST'
-      expect(game.player_name).to eq 'OW'
+
+      game_builder_param = {
+        game_result: 'In progress',
+        secret_word: 'TEST',
+        player_name: 'OW'
+      }
+      
+      game_builder = double('Game Builder')
+      allow(game_builder).to receive(:call).and_return(game_builder_param)
+
+      expect(game_builder.call[:game_result]).to eq 'In progress'
+      expect(game_builder.call[:secret_word]).to eq 'TEST'
+      expect(game_builder.call[:player_name]).to eq 'OW'
+
+      # expect(game.reload.game_result).to eq 'In progress'
+      # expect(game.secret_word).to eq 'TEST'
+      # expect(game.player_name).to eq 'OW'
     end
   end
 

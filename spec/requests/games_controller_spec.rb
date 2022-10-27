@@ -19,18 +19,11 @@ describe GamesController do
       game = Game.last
       expect(game.remaining_lives).to be 9
 
-      game_builder_param = {
-        game_result: 'In progress',
-        secret_word: 'TEST',
-        player_name: 'OW'
-      }
-      
-      game_builder = double('Game Builder')
-      allow(game_builder).to receive(:call).and_return(game_builder_param)
+      game_builder = instance_double(GameBuilder)
+      allow(GameBuilder).to receive(:new).and_return(game_builder)
+      allow(game_builder).to receive(:call).and_return(Game.new)
 
-      expect(game_builder.call[:game_result]).to eq 'In progress'
-      expect(game_builder.call[:secret_word]).to eq 'TEST'
-      expect(game_builder.call[:player_name]).to eq 'OW'
+      # Above is equivalent to: allow_any_instance_of(GameBuilder).to receive(:call).and_return(Game.new)
 
       # expect(game.reload.game_result).to eq 'In progress'
       # expect(game.secret_word).to eq 'TEST'

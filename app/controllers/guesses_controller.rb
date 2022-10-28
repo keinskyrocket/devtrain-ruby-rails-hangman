@@ -1,32 +1,19 @@
 class GuessesController < ApplicationController
   def create    
     game = Game.find(params[:game_id])
-    
+    guess_transaction = GuessTransaction.new(game, guess_params)
+
     if game.game_result != 'In progress'
       redirect_to game, notice: "Game is already over."
       return
     end
-
+    
     if game.letters_guessed.include?(guess_params[:value])
       redirect_to game, notice: "The same guess is already made."
       return
     end
     
-    guess = game.guesses.build(guess_params)
-
-    guess.transaction do
-      guess.save!
-
-      if game.secret_word.chars.uniq.count == game.correct_guess
-        game.game_result = 'Win'
-      end
-      
-      if game.remaining_lives <= 0
-        game.game_result = 'Lose'
-      end   
-
-      game.save!
-    end
+    guess_transaction.call
 
     if game.game_result == 'Win'
       redirect_to game, notice: "You won!"

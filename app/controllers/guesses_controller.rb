@@ -1,27 +1,22 @@
 class GuessesController < ApplicationController
   def create    
     game = Game.find(params[:game_id])
-    guess_transaction = GuessTransaction.new(game, guess_params)
+    guess_service = GuessService.new(game, guess_params)
 
-    if game.game_result != 'In progress'
-      redirect_to game, notice: "Game is already over."
+
+    if !guess_service.in_progress?
+      redirect_to game, notice: guess_service.messages[:gameOver]
       return
     end
-    
-    if game.letters_guessed.include?(guess_params[:value])
-      redirect_to game, notice: "The same guess is already made."
+
+    if guess_service.guess_dupe?
+      redirect_to game, notice: guess_service.messages[:dupe]
       return
     end
-    
-    guess_transaction.call
 
-    if game.game_result == 'Win'
-      redirect_to game, notice: "You won!"
-    elsif game.game_result == 'Lose'
-      redirect_to game, notice: "Game over..."
-    else            
-      redirect_to game, notice: "Guess was successfully created."
-    end
+    guess_service.guess_transaction
+    
+    redirect_to game, notice: guess_service.game_end
  
   rescue ActiveRecord::RecordInvalid
     redirect_to game, alert: "Unable to create guesses."

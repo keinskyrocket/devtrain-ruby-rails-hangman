@@ -4,35 +4,25 @@ class GuessService
     @guess = game.guesses.build(guess_params)
   end
 
-  def messages
-    {
-      dupe: "The same guess is already made.",
+  def call
+    messages = {
       gameOver: "Game is already over.",
+      dupe: "The same guess is already made.",
       win: "You won!",
       lose: "Game over...",
       guessCreated: "Guess was successfully created.",
     }
-  end
 
-  def in_progress?
-    @game.game_result.include?('In progress')
-  end
-
-  def guess_dupe?
-    @game.letters_guessed.include?(@guess[:value])
-  end
-
-  def game_end
-    if @game.game_result == 'Win'
-      messages[:win]
-    elsif @game.game_result == 'Lose'
-      messages[:lose]
-    else          
-      messages[:guessCreated]
+    if !@game.game_result.include?('In progress')
+      messages[:gameOver]
+      return
     end
-  end
-  
-  def guess_transaction
+
+    if @game.letters_guessed.include?(@guess[:value])
+      messages[:dupe]
+      return
+    end
+
     @guess.transaction do
       @guess.save!
 
@@ -45,6 +35,16 @@ class GuessService
       end   
 
       @game.save!
+      
     end
+
+    if @game.game_result == 'Win'
+      messages[:win]
+    elsif @game.game_result == 'Lose'
+      messages[:lose]
+    else          
+      messages[:guessCreated]
+    end
+
   end
 end

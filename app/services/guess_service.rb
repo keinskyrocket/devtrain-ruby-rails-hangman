@@ -14,13 +14,11 @@ class GuessService
     }
 
     if !@game.game_result.include?('In progress')
-      messages[:gameOver]
-      return
+      return messages[:gameOver]
     end
 
     if @game.letters_guessed.include?(@guess[:value])
-      messages[:dupe]
-      return
+      return messages[:dupe]
     end
 
     @guess.transaction do
@@ -35,7 +33,6 @@ class GuessService
       end   
 
       @game.save!
-      
     end
 
     if @game.game_result == 'Win'
@@ -45,6 +42,5 @@ class GuessService
     else          
       messages[:guessCreated]
     end
-
   end
 end

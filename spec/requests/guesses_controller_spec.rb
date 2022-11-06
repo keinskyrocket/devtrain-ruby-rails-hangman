@@ -17,6 +17,21 @@ describe GuessesController do
   end
 
   describe '#create' do
+    context 'when a guess was made' do
+      let (:guesses) { ['T', 'A'] }
+      it 'runs guess_service' do
+        expect(game.reload.game_result).to eq 'In progress'
+
+        guess_service = instance_double(GuessService)
+        allow(GuessService).to receive(:new).and_return(guess_service)
+        allow(guess_service).to receive(:call).and_return('Guess was successfully created.')
+
+        post game_guesses_path(game), params: { guess: { value: 'P' } }
+        expect(response).to redirect_to game
+        expect(flash[:notice]).to eq 'Guess was successfully created.'
+      end
+    end
+
     context 'when the same guess was made' do
       let (:guesses) { ['T', 'A'] }
 

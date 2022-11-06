@@ -1,33 +1,31 @@
 require 'rails_helper'
 
 describe GamesController do
-  let(:valid_params) { {
-    player_name: 'OW'
-  } }
-
   context 'when creating a game' do
-    it 'creates a new game with correct defaults and a secret word' do
-      allow(Game).to receive(:load_secret_words).and_return(['test'])
+    let(:valid_params) { {
+      player_name: 'OW',
+      game_result: 'In progress',
+      secret_word: 'TURTLE',
+    } }
 
+    it 'creates a new game with correct defaults and a secret word' do     
+      game_builder = instance_double(GameBuilder)
+      allow(GameBuilder).to receive(:new).and_return(game_builder)
+      allow(game_builder).to receive(:call).and_return(Game.new(valid_params))
+      
       expect{
         post games_path, params: { game: valid_params }
       }.to change{Game.count}.by(1)
       
       expect(response).to redirect_to(game_path(Game.last[:id]))
       expect(flash[:notice]).to eq 'Game was successfully created.'
-
+      
       game = Game.last
       expect(game.remaining_lives).to be 9
+      expect(game.reload.game_result).to eq 'In progress'
+      expect(game.secret_word).to eq 'TURTLE'
+      expect(game.player_name).to eq 'OW'
 
-      game_builder = instance_double(GameBuilder)
-      allow(GameBuilder).to receive(:new).and_return(game_builder)
-      allow(game_builder).to receive(:call).and_return(Game.new)
-
-      # Above is equivalent to: allow_any_instance_of(GameBuilder).to receive(:call).and_return(Game.new)
-
-      # expect(game.reload.game_result).to eq 'In progress'
-      # expect(game.secret_word).to eq 'TEST'
-      # expect(game.player_name).to eq 'OW'
     end
   end
 

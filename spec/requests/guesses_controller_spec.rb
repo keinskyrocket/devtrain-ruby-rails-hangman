@@ -24,7 +24,7 @@ describe GuessesController do
 
         guess_service = instance_double(GuessService)
         guess_params = { value: 'P' }
-        expect(GuessService).to receive(:new).with(game, guess_params).and_return(guess_service)
+        expect(GuessService).to receive(:new).with(game, ActionController::Parameters.new(guess_params).permit(:value)).and_return(guess_service)
         expect(guess_service).to receive(:call).and_return('Guess was successfully created.')
 
 

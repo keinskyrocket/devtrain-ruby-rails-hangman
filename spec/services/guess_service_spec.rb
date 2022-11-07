@@ -52,12 +52,12 @@ describe GuessService do
       
       it 'displays a message that the guess is dupe' do
         expect(game.reload.game_result).to eq 'In progress'
-                
+
+        initial_guesses = game.reload.guesses.count
         guess_service = GuessService.new(game, { value: 'L' })
 
+        expect(game.guesses.count).to eq(initial_guesses)
         expect(guess_service.call).to eq 'The same guess is already made.'
-        expect(game.reload.game_result).to eq 'In progress'
-        expect{guess_service.call}.to change{game.guesses.count}.by(0)
       end
     end
 

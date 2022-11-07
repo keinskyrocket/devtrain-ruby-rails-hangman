@@ -57,7 +57,7 @@ describe GuessService do
 
         expect(guess_service.call).to eq 'The same guess is already made.'
         expect(game.reload.game_result).to eq 'In progress'
-        expect(game.guesses.pluck(:value)).to include('L')
+        expect{guess_service.call}.to change{game.guesses.count}.by(0)
       end
     end
 

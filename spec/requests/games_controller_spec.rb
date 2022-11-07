@@ -8,9 +8,9 @@ describe GamesController do
       secret_word: 'TURTLE',
     } }
 
-    it 'creates a new game with correct defaults and a secret word' do     
+    it 'creates a new game with correct defaults and a secret word' do
       game_builder = instance_double(GameBuilder)
-      allow(GameBuilder).to receive(:new).and_return(game_builder)
+      expect(GameBuilder).to receive(:new).with(ActionController::Parameters.new(valid_params).permit(:player_name)).and_return(game_builder)
       expect(game_builder).to receive(:call).and_return(Game.new(valid_params))
       
       expect{
@@ -25,7 +25,6 @@ describe GamesController do
       expect(game.reload.game_result).to eq 'In progress'
       expect(game.secret_word).to eq 'TURTLE'
       expect(game.player_name).to eq 'OW'
-
     end
   end
 

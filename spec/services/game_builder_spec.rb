@@ -12,6 +12,5 @@ describe GameBuilder do
     expect(game[:secret_word]).to eq 'TEST'
     expect(game[:player_name]).to eq 'OW'
     expect(game[:game_result]).to eq 'In progress'
-    expect(game).to eq 1
   end
 end

@@ -1,7 +1,7 @@
 class GuessesController < ApplicationController
   def create    
     game = Game.find(params[:game_id])
-    guess_service = GuessService.new(game, guess_params)
+    guess_service = GuessService.new(game, guess_params.to_h)
     
     flash[:notice] = guess_service.call
     redirect_to game

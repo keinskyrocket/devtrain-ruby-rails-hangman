@@ -24,9 +24,10 @@ describe GuessService do
         expect(game.reload.game_result).to eq 'In progress'
                 
         guess_service = GuessService.new(game, { value: 'A' })
-        
+
         expect(guess_service.call).to eq 'Guess was successfully created.'
         expect(game.reload.game_result).to eq 'In progress'
+        expect(game.guesses.last.value).to eq 'A'
       end
     end
 
@@ -42,6 +43,7 @@ describe GuessService do
 
         guess_service2 = GuessService.new(game, { value: 'P' })
         expect(guess_service2.call).to eq 'Game is already over.'
+        expect(game.guesses.last.value).to eq 'P'
       end
     end
 
@@ -55,6 +57,7 @@ describe GuessService do
 
         expect(guess_service.call).to eq 'The same guess is already made.'
         expect(game.reload.game_result).to eq 'In progress'
+        expect(game.guesses.pluck(:value)).to include('L')
       end
     end
 
@@ -68,6 +71,7 @@ describe GuessService do
 
         expect(guess_service.call).to eq 'Game over...'
         expect(game.reload.game_result).to eq 'Lose'
+        expect(game.guesses.last.value).to eq 'P'
       end
     end
 
@@ -81,6 +85,7 @@ describe GuessService do
         
         expect(guess_service.call).to eq 'You won!'
         expect(game.reload.game_result).to eq 'Win'
+        expect(game.guesses.last.value).to eq 'E'
       end
     end
   end

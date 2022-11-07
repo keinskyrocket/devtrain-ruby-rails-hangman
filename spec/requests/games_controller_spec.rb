@@ -11,7 +11,7 @@ describe GamesController do
     it 'creates a new game with correct defaults and a secret word' do     
       game_builder = instance_double(GameBuilder)
       allow(GameBuilder).to receive(:new).and_return(game_builder)
-      allow(game_builder).to receive(:call).and_return(Game.new(valid_params))
+      expect(game_builder).to receive(:call).and_return(Game.new(valid_params))
       
       expect{
         post games_path, params: { game: valid_params }
